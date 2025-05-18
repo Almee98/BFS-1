@@ -1,5 +1,5 @@
-# Time Complexity : O(n), where n is the number of courses
-# Space Complexity : O(n), where n is the number of courses
+# Time Complexity : O(V+E), where V is the number of courses and E is the number of prerequisites
+# Space Complexity : O(V+E), where V is the number of courses and E is the number of prerequisites
 # Did this code successfully run on Leetcode : Yes
 # Any problem you faced while coding this : No
 
@@ -63,3 +63,42 @@ class Solution:
         # If we reach here, it means we couldn't take all the courses due to circular dependencies
         # So we return False
         return False
+
+# Time Complexity : O(V+E), where V is the number of courses and E is the number of prerequisites
+# Space Complexity : O(V+E), where V is the number of courses and E is the number of prerequisites
+# Approach: DFS
+# We will use a DFS approach to solve this problem.
+# 1. Create a hashMap to store the prerequisites and the courses that depend on them.
+# 2. Create a list to store the completion status of each course.
+# 3. Create a set to store the courses that are currently being visited.
+# 4. For each course, check if it is already completed or if it is currently being visited.
+# If it is in the current visit path, it means we have a cycle, so return False.
+# 5. If the course is not completed, mark it as being visited and check its prerequisites.
+# 6. If any of the prerequisites have a cycle, return False.   
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites):
+        def isCycle(c):
+            if complete[c]:
+                return False
+            if c in visit:
+                return True
+
+            visit.add(c)
+            courses = courseMap[c]
+            for course in courses:
+                if isCycle(course):
+                    return True
+            visit.remove(c)
+            complete[c] = True
+
+        courseMap = defaultdict(list)
+        for i in range(len(prerequisites)):
+            course, depend = prerequisites[i][0], prerequisites[i][1]
+            courseMap[depend].append(course)
+
+        visit = set()
+        complete = [False] * numCourses
+        for i in range(numCourses):
+            if isCycle(i):
+                return False
+        return True
